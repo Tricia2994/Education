@@ -1,191 +1,75 @@
 package end.project;
 
-
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.Random;
-
+import javax.imageio.ImageIO;
 public class ImageProcessing {
-
-    public static void main(String[] args) {
-        // The provided images are apple.jpg, flower.jpg, and kitten.jpg
-        int[][] imageData = imgToTwoD("./apple.jpg");
-        // Or load your own image using a URL!
-        int[][] negative = negativeColor(imageData);
-
-        twoDToImage(negative, "./negative_apple.jpg");
-        int[][] stretched = stretchHorizontally(imageData);
-        twoDToImage(stretched, "./stretched_apple.jpg");
-        int[][] shrinked = shrinkVertically(imageData);
-        twoDToImage(shrinked, "./shrinked_apple.jpn");
-        int[][] inverted = invertImage(imageData);
-        twoDToImage(inverted, "./inverted_apple.jpn");
-        int[][] filter = colorFilter(imageData);
-        twoDToImage(filter, "./filter_apple.jpn");
-        int[][] blankImg = new int[500][500];
-
-        int[][] randomImg = paintRandomImage(blankImg);
-
-        twoDToImage(randomImg, "./random_img.jpg");
-        int[] rgba = {255, 255, 0, 255};
-
-        int[][] rectangleImg = paintRectangle(randomImg, 200, 200, 100, 100, getColorIntValFromRGBA(rgba));
-
-        twoDToImage(rectangleImg, "./rectangle.jpg");
-        //int[][] imageData = imgToTwoD("https://content.codecademy.com/projects/project_thumbnails/phaser/bug-dodger.png");
-        //	viewImageData(imageData);
-        int[][] trimmed = trimBorders(imageData, 60);
-        twoDToImage(trimmed, "./trimmed_apple.jpg");
-        //	int[][] allFilters = stretchHorizontally(shrinkVertically(colorFilter(negativeColor(trimBorders(invertImage(imageData), 50)), 200, 20, 40)));
-        // Painting with pixels
-    }
-    // Image Processing Methods
-
-    public static int[][] trimBorders(int[][] imageTwoD, int pixelCount) {
-        // Example Method
-        if (imageTwoD.length > pixelCount * 2 && imageTwoD[0].length > pixelCount * 2) {
-            int[][] trimmedImg = new int[imageTwoD.length - pixelCount * 2][imageTwoD[0].length - pixelCount * 2];
-            for (int i = 0; i < trimmedImg.length; i++) {
-                for (int j = 0; j < trimmedImg[i].length; j++) {
-                    trimmedImg[i][j] = imageTwoD[i + pixelCount][j + pixelCount];
-                }
-            }
-            return trimmedImg;
-        } else {
-            System.out.println("Cannot trim that many pixels from the given image.");
-            return imageTwoD;
-        }
-    }
-
-    public static int[][] negativeColor(int[][] imageTwoD) {
-        // TODO: Fill in the code for this method
-        int[][] manipulatedImg = new int[imageTwoD.length][imageTwoD[0].length];
-        for (int i = 0; i < imageTwoD.length; i++) {
-            for (int j = 0; j < imageTwoD[i].length; j++) {
-                int[] rgba = getRGBAFromPixel(imageTwoD[i][j]);
-            }
-            return manipulatedImg;
-        }
-
-
-    public static int[][] stretchHorizontally(int[][] imageTwoD) {
-        // TODO: Fill in the code for this method
-        int[][] manipulatedImg = new int[imageTwoD.length][imageTwoD[0].length * 2];
-        int it = 0;
-        for (int i = 0; i < imageTwoD.length; i++) {
-            for (int j = 0; j < imageTwoD[i].length; j++) {
-                it = j * 2;
-                manipulatedImg[i][it] = imageTwoD[i][j];
-                manipulatedImg[i][it + 1] = imageTwoD[i][j];
-            }
-        }
-        return manipulatedImg;
-    }
-
-    public static int[][] shrinkVertically(int[][] imageTwoD) {
-        // TODO: Fill in the code for this method
-        int[][] manipulatedImg = new int[imageTwoD.length / 2][imageTwoD[0].length];
-        for (int i = 0; i < imageTwoD[0].length; i++) {
-            for (int j = 0; j < imageTwoD.length - 1; j += 2) {
-                manipulatedImg[j / 2][i] = imageTwoD[j][i];
-            }
-        }
-        return manipulatedImg;
-    }
-
-    public static int[][] invertImage(int[][] imageTwoD) {
-        // TODO: Fill in the code for this method
-        int[][] invertedImg = new int[imageTwoD.length][imageTwoD[0].length];
-        for (int i = 0; i < imageTwoD.length; i++) {
-            for (int j = 0; j < imageTwoD[i].length; j++) {
-                invertedImg[i][j] = imageTwoD[(imageTwoD.length - 1) - i][(imageTwoD[i].length - 1) - j];
-            }
-        }
-        return invertedImg;
-    }
-
-    public static int[][] colorFilter(int[][] imageTwoD, int redChangeValue, int greenChangeValue, int blueChangeValue) {
-        // TODO: Fill in the code for this method
-        int[][] Filtered = new int[imageTwoD.length][imageTwoD[0].length];
-        for (int i = 0; i < imageTwoD.length; i++) {
-            for (int j = 0; j < imagetwoD[i].length; j++) {
-                int[] rgba = getRGBAFromPixel(imageTwoD[i][j]);
-                int newRed = rgba[0] + redChangeValue;
-                int newGreen = rgba[1] + greenChangeValue;
-                int newBlue = rgba[2] + blueChangeValue;
-                if (newRed < 0) {
-                    newRed = 0;
-                } else if (newRed > 255) {
-                    newRed = 255;
-                }
-
-                if (newGreen < 0) {
-                    newGreen = 0;
-                } else if (newGreen > 255) {
-                    newGreen = 255;
-                }
-
-                if (newBlue < 0) {
-                    newBlue = 0;
-                } else if (newBlue > 255) {
-                    newBlue = 255;
-
-                }
-                rgba[0] = newRed;
-                rgba[1] = newGreen;
-                rgba[2] = newBlue;
-                manipulatedImg[i][j] = getColorIntValFromRGBA(rgba);
-            }
-        }
-        return Filtered;
-    }
-    // Painting Methods
-
-    public static int[][] paintRandomImage(int[][] canvas) {
-        // TODO: Fill in the code for this method
-        Random rand = new Random();
-        for (int i = 0; i < imageTwoD.length; i++) {
-            for (int j = 0; j < imageTwoD[i].length; j++) {
-                int randRed = rand.nextInt(256);
-                int randGreen = rand.nextInt(256);
-                int randBlue = rand.nextInt(256);
-                int[] rgbaValues = {randRed, randGreen, randBlue, 255};
-                canvas[i][j] = getColorIntValFromRGBA(rgba);
-            }
-        }
-        return rand;
-    }
-
-    public static int[][] paintRectangle(int[][] canvas, int width, int height, int rowPosition, int colPosition, int color) {
-        // TODO: Fill in the code for this method
-        int[][] rectImg = new int[imageTwoD.length][imageTw0D[0].length];
-        for (int i = 0; i < imageTwoD.length; i++) {
-            for (int j = 0; j < imageTwoD[i].length; j++) {
-                if (i >= rowPosition && i <= rowPosition + width) {
-                    if (j >= colPosition && j <= colPosition + height) {
-                        canvas[i][j] = color;
-
-                    }
-                }
-            }
-        }
-        return rectImg;
-    }
-
-    public static int[][] generateRectangles(int[][] canvas, int numRectangles) {
-        // TODO: Fill in the code for this method
-        Random rand = new Random();
-        for (int i = 0; i < numRectangles; i++) {
-            int randomWidth = rand.nextInt(canvas[0].length);
-            int randomHeight = rand.nextInt(canvas.length);
-            int randomRowPos = rand.nextInt(canvas.length - randomHeight);
-            int randomColPos = rand.nextInt(canvas[0].length - randomWidth);
-            int randomColor;
-            int[] rgba = {rand.nextInt(256), rand.nextInt(256), rand.nextIntcanvas = paintRectangle(canvas, randomWidth, randomHeight, randomRowPos, randomColPos, randomColor);
-        }
-    }
-    return rand ;
-}
-// Utility Methods
-public static int[][] imgToTwoD(String inputFileOrLink) {
+	public static void main(String[] args) {
+    // The provided images are apple.jpg, flower.jpg, and kitten.jpg
+		int[][] imageData = imgToTwoD("./apple.jpg");
+    // Or load your own image using a URL!
+		//int[][] imageData = imgToTwoD("https://content.codecademy.com/projects/project_thumbnails/phaser/bug-dodger.png");
+		//viewImageData(imageData);
+		int[][] trimmed = trimBorders(imageData, 60);
+		twoDToImage(trimmed, "./trimmed_apple.jpg");
+		// int[][] allFilters = stretchHorizontally(shrinkVertically(colorFilter(negativeColor(trimBorders(invertImage(imageData), 50)), 200, 20, 40)));
+		// Painting with pixels
+	}
+	// Image Processing Methods
+	public static int[][] trimBorders(int[][] imageTwoD, int pixelCount) {
+		// Example Method
+		if (imageTwoD.length > pixelCount * 2 && imageTwoD[0].length > pixelCount * 2) {
+			int[][] trimmedImg = new int[imageTwoD.length - pixelCount * 2][imageTwoD[0].length - pixelCount * 2];
+			for (int i = 0; i < trimmedImg.length; i++) {
+				for (int j = 0; j < trimmedImg[i].length; j++) {
+					trimmedImg[i][j] = imageTwoD[i + pixelCount][j + pixelCount];
+				}
+			}
+			return trimmedImg;
+		} else {
+			System.out.println("Cannot trim that many pixels from the given image.");
+			return imageTwoD;
+		}
+	}
+	public static int[][] negativeColor(int[][] imageTwoD) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	public static int[][] stretchHorizontally(int[][] imageTwoD) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	public static int[][] shrinkVertically(int[][] imageTwoD) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	public static int[][] invertImage(int[][] imageTwoD) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	public static int[][] colorFilter(int[][] imageTwoD, int redChangeValue, int greenChangeValue, int blueChangeValue) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	// Painting Methods
+	public static int[][] paintRandomImage(int[][] canvas) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	public static int[][] paintRectangle(int[][] canvas, int width, int height, int rowPosition, int colPosition, int color) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	public static int[][] generateRectangles(int[][] canvas, int numRectangles) {
+		// TODO: Fill in the code for this method
+		return null;
+	}
+	// Utility Methods
+	public static int[][] imgToTwoD(String inputFileOrLink) {
 		try {
 			BufferedImage image = null;
 			if (inputFileOrLink.substring(0, 4).toLowerCase().equals("http")) {
